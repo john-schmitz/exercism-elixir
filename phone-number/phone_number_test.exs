@@ -67,22 +67,22 @@ defmodule PhoneTest do
     assert Phone.number("2120550100") == "0000000000"
   end
 
-  @tag :pending
+  # @tag :pending
   test "area code" do
     assert Phone.area_code("2125550100") == "212"
   end
 
-  @tag :pending
+  # @tag :pending
   test "area code with full US phone number" do
     assert Phone.area_code("12125550100") == "212"
   end
 
-  @tag :pending
+  # @tag :pending
   test "pretty print" do
     assert Phone.pretty("2125550100") == "(212) 555-0100"
   end
 
-  @tag :pending
+  # @tag :pending
   test "pretty print with full US phone number" do
     assert Phone.pretty("12125550100") == "(212) 555-0100"
   end

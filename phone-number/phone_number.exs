@@ -24,21 +24,27 @@ defmodule Phone do
   """
   @spec number(String.t) :: String.t
   def number(raw) do
-    raw
-    |> clean
-    |> is_good_length?
-    |> legible_number?
-    |> legit_country_code?
-    |> legit_local_code?
-    |> legit_exchange_code?
+    cleaned_phone_number = raw |> clean
+    with {:ok, phone_number} <- is_good_length?(cleaned_phone_number),
+        {:ok, phone_number} <- legible_number?(phone_number),
+        {:ok, phone_number} <- legit_country_code?(phone_number),
+        {:ok, phone_number} <- legit_local_code?(phone_number),
+        {:ok, phone_number} <- legit_exchange_code?(phone_number)
+    do
+      phone_number
+    else
+      # We should give the caller a better information about the error message as well,
+      # so it knows what goes wrong. But, the test only need "0000000000", which is very unfortunate.
+      {:error, _} -> invalid_return()
+    end
   end
 
   defp legit_exchange_code?(phone_number) do
     exchange_code = phone_number |> String.at(3)
     case exchange_code do
-      "1" -> invalid_return()
-      "0" -> invalid_return()
-      _ -> phone_number
+      "1" -> {:error, "Invalid Exchange Code. Exchange code must not start with #{na_code()} or 0."}
+      "0" -> {:error, "Invalid Exchange Code. Exchange code must not start with #{na_code()} or 0."}
+      _ -> {:ok, phone_number}
     end
   end
 
@@ -48,8 +54,8 @@ defmodule Phone do
       String.starts_with?(phone_number, "0"))
 
     case local_code_checking do
-      false -> phone_number
-      true -> invalid_return()
+      false -> {:ok, phone_number}
+      true -> {:error, "Invalid Local Code. Local code must not start with #{na_code()} or 0."}
     end
   end
 
@@ -57,22 +63,22 @@ defmodule Phone do
     country_code_checking = String.length(phone_number) == 11 && !String.starts_with?(phone_number, na_code())
 
     case country_code_checking do
-      false -> phone_number
-      true -> invalid_return()
+      false -> {:ok, phone_number}
+      true -> {:error, "Invalid Country Code. Country code must be #{na_code()}"}
     end
   end
 
   defp legible_number?(phone_number) do
     case Regex.run(~r<[a..z]>, phone_number) == nil do
-      true -> phone_number
-      false -> invalid_return()
+      true -> {:ok, phone_number}
+      false -> {:error, "Invalid Format. Must not contain any letter."}
     end
   end
 
   defp is_good_length?(phone_number) do
-    case String.length(phone_number) > 9 do
-      true -> phone_number
-      false -> invalid_return()
+    case String.length(phone_number) > valid_phone_length() do
+      true -> {:ok, phone_number}
+      false -> {:error, "Invalid Length. Phone number length should be more than #{valid_phone_length()} digits."}
     end
   end
 
@@ -83,6 +89,7 @@ defmodule Phone do
 
   defp invalid_return, do: "0000000000"
   defp na_code, do: "1"
+  defp valid_phone_length, do: 9
 
   @doc """
   Extract the area code from a phone number
@@ -106,6 +113,9 @@ defmodule Phone do
   """
   @spec area_code(String.t) :: String.t
   def area_code(raw) do
+    raw
+    |> number
+    |> String.slice(0..2)
   end
 
   @doc """
@@ -130,5 +140,9 @@ defmodule Phone do
   """
   @spec pretty(String.t) :: String.t
   def pretty(raw) do
+    phone_number = raw |> number
+    exchange_number = phone_number |> String.slice(3..5)
+    subscriber_number = phone_number |> String.slice(6..9)
+    "(#{area_code(raw)}) #{exchange_number}-#{subscriber_number}"
   end
 end
