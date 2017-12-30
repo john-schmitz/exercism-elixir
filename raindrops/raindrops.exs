@@ -8,9 +8,10 @@ defmodule Raindrops do
   - If the number does not contain 3, 5, or 7 as a prime factor,
     just pass the number's digits straight through.
   """
-  @spec convert(pos_integer) :: String.t
+  @spec convert(pos_integer) :: String.t()
   def convert(number) do
     raindrops = do_convert(number)
+
     cond do
       String.length(raindrops) == 0 -> Integer.to_string(number)
       true -> raindrops
@@ -18,7 +19,7 @@ defmodule Raindrops do
   end
 
   def do_convert(number) do
-    Enum.reduce(raindrop_mapping, "", fn({x, string}, acc) ->
+    Enum.reduce(raindrop_mapping, "", fn {x, string}, acc ->
       cond do
         rem(number, x) == 0 -> acc <> string
         true -> acc

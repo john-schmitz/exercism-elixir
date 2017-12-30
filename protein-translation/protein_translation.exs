@@ -1,5 +1,4 @@
 defmodule ProteinTranslation do
-
   def mapping do
     %{
       "UGU" => "Cysteine",
@@ -25,7 +24,7 @@ defmodule ProteinTranslation do
   @doc """
   Given an RNA string, return a list of proteins specified by codons, in order.
   """
-  @spec of_rna(String.t()) :: { atom,  list(String.t()) }
+  @spec of_rna(String.t()) :: {atom, list(String.t())}
   def of_rna(rna) do
     do_of_rna(rna, [])
   end
@@ -34,6 +33,7 @@ defmodule ProteinTranslation do
 
   defp do_of_rna(rna, result) do
     {current_codon, rest_codons} = String.split_at(rna, 3)
+
     case of_codon(current_codon) do
       {:ok, "STOP"} -> {:ok, result}
       {:error, _} -> {:error, "invalid RNA"}
@@ -62,7 +62,7 @@ defmodule ProteinTranslation do
   UAG -> STOP
   UGA -> STOP
   """
-  @spec of_codon(String.t()) :: { atom, String.t() }
+  @spec of_codon(String.t()) :: {atom, String.t()}
   def of_codon(codon) do
     case Map.get(mapping(), codon) do
       nil -> {:error, "invalid codon"}
@@ -70,4 +70,3 @@ defmodule ProteinTranslation do
     end
   end
 end
-

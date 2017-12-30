@@ -15,42 +15,52 @@ defmodule Change do
 
   """
 
-  @spec generate(list, integer) :: {:ok, list} | {:error, String.t}
-  def generate(_, target) when target < 0, do: { :error, "cannot change" }
-  def generate(_, target) when target == 0, do: { :ok, [] }
+  @spec generate(list, integer) :: {:ok, list} | {:error, String.t()}
+  def generate(_, target) when target < 0, do: {:error, "cannot change"}
+  def generate(_, target) when target == 0, do: {:ok, []}
+
   def generate(coins, target) do
-    solutions = coins
-    |> Enum.reject(&(&1 > target))
-    |> Enum.with_index
-    |> Enum.map(fn { _, index } ->
+    solutions =
       coins
-      |> List.delete_at(index)
-      |> Enum.reverse
-      |> do_generate(target)
-    end)
-    |> Enum.filter(&(Enum.sum(&1) == target))
+      |> Enum.reject(&(&1 > target))
+      |> Enum.with_index()
+      |> Enum.map(fn {_, index} ->
+        coins
+        |> List.delete_at(index)
+        |> Enum.reverse()
+        |> do_generate(target)
+      end)
+      |> Enum.filter(&(Enum.sum(&1) == target))
+
     case Enum.empty?(solutions) do
       true ->
-        { :error, "cannot change" }
-      false ->
-        change = solutions
-        |> Enum.min_by(&length/1)
-        |> Enum.reverse
+        {:error, "cannot change"}
 
-        { :ok, change }
+      false ->
+        change =
+          solutions
+          |> Enum.min_by(&length/1)
+          |> Enum.reverse()
+
+        {:ok, change}
     end
   end
 
   defp do_generate([], _), do: []
-  defp do_generate([ head | tail ], target_rest) when head > target_rest, do: do_generate(tail, target_rest)
-  defp do_generate([ head | tail ], target_rest) when head == target_rest, do: [ head | do_generate(tail, target_rest - head) ]
-  defp do_generate(all = [ head | tail ], target_rest) do
+
+  defp do_generate([head | tail], target_rest) when head > target_rest,
+    do: do_generate(tail, target_rest)
+
+  defp do_generate([head | tail], target_rest) when head == target_rest,
+    do: [head | do_generate(tail, target_rest - head)]
+
+  defp do_generate(all = [head | tail], target_rest) do
     cond do
-      !Enum.empty?(tail) && List.last(tail) > target_rest - head
-        -> do_generate(tail, target_rest)
-      true
-        -> [ head | do_generate(all, target_rest - head) ]
+      !Enum.empty?(tail) && List.last(tail) > target_rest - head ->
+        do_generate(tail, target_rest)
+
+      true ->
+        [head | do_generate(all, target_rest - head)]
     end
   end
-
 end

@@ -13,32 +13,36 @@ defmodule Tournament do
   @spec tally(input :: list(String.t())) :: String.t()
   def tally(input) do
     input
-    |> Enum.reduce(%{}, fn(x, acc) ->
+    |> Enum.reduce(%{}, fn x, acc ->
       case String.split(x, ";") do
         [home, away, result] ->
           case result do
             "win" ->
               acc
-              |> Map.update(home, [:o], &([:o | &1]))
-              |> Map.update(away, [:x], &([:x | &1]))
+              |> Map.update(home, [:o], &[:o | &1])
+              |> Map.update(away, [:x], &[:x | &1])
+
             "draw" ->
               acc
-              |> Map.update(home, [:d], &([:d | &1]))
-              |> Map.update(away, [:d], &([:d | &1]))
+              |> Map.update(home, [:d], &[:d | &1])
+              |> Map.update(away, [:d], &[:d | &1])
+
             "loss" ->
               acc
-              |> Map.update(home, [:x], &([:x | &1]))
-              |> Map.update(away, [:o], &([:o | &1]))
+              |> Map.update(home, [:x], &[:x | &1])
+              |> Map.update(away, [:o], &[:o | &1])
+
             _ ->
               acc
           end
-        _ -> acc
-      end
 
+        _ ->
+          acc
+      end
     end)
-    |> Map.to_list
-    |> Enum.map(&(process_team(&1)))
-    |> Enum.sort(fn(team_1, team_2) ->
+    |> Map.to_list()
+    |> Enum.map(&process_team(&1))
+    |> Enum.sort(fn team_1, team_2 ->
       {_, _, _, _, _, _, results_1} = team_1
       {_, _, _, _, _, _, results_2} = team_2
       results_1 >= results_2
@@ -52,7 +56,7 @@ defmodule Tournament do
     wins = fixtures |> Enum.count(&(&1 == :o))
     draws = fixtures |> Enum.count(&(&1 == :d))
     losses = fixtures |> Enum.count(&(&1 == :x))
-    score = (3 * wins) + draws
+    score = 3 * wins + draws
     match_played = wins + draws + losses
 
     results
@@ -64,18 +68,23 @@ defmodule Tournament do
   end
 
   defp pretty_table(results) do
-    score_board = results
-    |> Enum.reduce("", fn(x, acc) ->
-      {team, _fixtures, mp, w, d, l, p} = x
-      team_name = String.pad_trailing("#{team}", team_row_max_length())
-      mp_string = String.pad_leading("#{mp}", 3)
-      w_string = String.pad_leading("#{w}", 3)
-      d_string = String.pad_leading("#{d}", 3)
-      l_string = String.pad_leading("#{l}", 3)
-      p_string = String.pad_leading("#{p}", 3)
-      team_row = "\n#{team_name}|#{mp_string} |#{w_string} |#{d_string} |#{l_string} |#{p_string}"
-      acc <> team_row
-    end)
+    score_board =
+      results
+      |> Enum.reduce("", fn x, acc ->
+        {team, _fixtures, mp, w, d, l, p} = x
+        team_name = String.pad_trailing("#{team}", team_row_max_length())
+        mp_string = String.pad_leading("#{mp}", 3)
+        w_string = String.pad_leading("#{w}", 3)
+        d_string = String.pad_leading("#{d}", 3)
+        l_string = String.pad_leading("#{l}", 3)
+        p_string = String.pad_leading("#{p}", 3)
+
+        team_row =
+          "\n#{team_name}|#{mp_string} |#{w_string} |#{d_string} |#{l_string} |#{p_string}"
+
+        acc <> team_row
+      end)
+
     table_header <> score_board
   end
 
@@ -85,4 +94,3 @@ defmodule Tournament do
 
   defp team_row_max_length, do: 31
 end
-

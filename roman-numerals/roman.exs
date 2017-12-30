@@ -2,17 +2,19 @@ defmodule Roman do
   @doc """
   Convert the number to a roman number.
   """
-  @spec numerals(pos_integer) :: String.t
+  @spec numerals(pos_integer) :: String.t()
   def numerals(number) do
     do_numerals(number, "")
   end
 
   defp do_numerals(0, result), do: result
+
   defp do_numerals(number, result) do
-    {arabic, roman} = Enum.find(roman_mapping(), fn (x) ->
-      {arabic, roman} = x
-      number - arabic >= 0
-    end)
+    {arabic, roman} =
+      Enum.find(roman_mapping(), fn x ->
+        {arabic, roman} = x
+        number - arabic >= 0
+      end)
 
     do_numerals(number - arabic, result <> roman)
   end

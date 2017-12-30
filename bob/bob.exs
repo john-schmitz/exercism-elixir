@@ -10,6 +10,7 @@ defmodule Bob do
 
   defp is_asking?(input), do: String.ends_with?(input, "?")
   defp is_silence?(input), do: String.trim(input) == ""
-  defp is_shouting?(input), do: String.upcase(input) == input && String.downcase(input) !== String.upcase(input)
 
+  defp is_shouting?(input),
+    do: String.upcase(input) == input && String.downcase(input) !== String.upcase(input)
 end

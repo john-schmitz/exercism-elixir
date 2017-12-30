@@ -1,10 +1,10 @@
 defmodule Acronym do
   defp abbreviate_word(word) do
     word
-    |> Macro.underscore
+    |> Macro.underscore()
     |> String.split("_")
-    |> Enum.reduce("", fn(x, acc) ->
-      acc <> (String.at(x, 0) |> String.upcase)
+    |> Enum.reduce("", fn x, acc ->
+      acc <> (String.at(x, 0) |> String.upcase())
     end)
   end
 
@@ -17,7 +17,7 @@ defmodule Acronym do
     string
     |> String.replace(~r<,>, "")
     |> String.split(~r< |->)
-    |> Enum.map(&(abbreviate_word/1))
-    |> Enum.join
+    |> Enum.map(&abbreviate_word/1)
+    |> Enum.join()
   end
 end

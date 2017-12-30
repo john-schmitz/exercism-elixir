@@ -9,7 +9,7 @@ defmodule Matrix do
   def from_string(input) do
     input
     |> String.split("\n")
-    |> Enum.reduce({%Matrix{}, 0}, fn(x, {acc, index}) ->
+    |> Enum.reduce({%Matrix{}, 0}, fn x, {acc, index} ->
       {Map.put(acc, index, x), index + 1}
     end)
     |> elem(0)
@@ -22,8 +22,8 @@ defmodule Matrix do
   @spec to_string(matrix :: %Matrix{}) :: String.t()
   def to_string(matrix) do
     matrix
-    |> Map.from_struct
-    |> Map.values
+    |> Map.from_struct()
+    |> Map.values()
     |> Enum.reject(&(&1 == nil))
     |> Enum.join("\n")
   end
@@ -34,16 +34,16 @@ defmodule Matrix do
   @spec rows(matrix :: %Matrix{}) :: list(list(integer))
   def rows(matrix) do
     matrix
-    |> Map.from_struct
-    |> Map.values
+    |> Map.from_struct()
+    |> Map.values()
     |> Stream.reject(&(&1 == nil))
-    |> Enum.map(&(column_convert_to_integer(&1)))
+    |> Enum.map(&column_convert_to_integer(&1))
   end
 
   defp column_convert_to_integer(column) do
     column
-    |> String.split
-    |> Enum.map(&(String.to_integer(&1)))
+    |> String.split()
+    |> Enum.map(&String.to_integer(&1))
   end
 
   @doc """
@@ -61,16 +61,17 @@ defmodule Matrix do
   @spec columns(matrix :: %Matrix{}) :: list(list(integer))
   def columns(matrix) do
     matrix
-    |> Map.from_struct
-    |> Map.values
+    |> Map.from_struct()
+    |> Map.values()
     |> Stream.reject(&(&1 == nil))
-    |> Enum.map(&(column_convert_to_integer(&1)))
+    |> Enum.map(&column_convert_to_integer(&1))
     |> transpose
   end
 
   defp transpose([[] | _]), do: []
+
   defp transpose(matrix_list) do
-    [Enum.map(matrix_list, &(hd(&1))) | transpose(Enum.map(matrix_list, &(tl(&1))))]
+    [Enum.map(matrix_list, &hd(&1)) | transpose(Enum.map(matrix_list, &tl(&1)))]
   end
 
   @doc """
@@ -82,4 +83,3 @@ defmodule Matrix do
     |> Enum.at(index)
   end
 end
-

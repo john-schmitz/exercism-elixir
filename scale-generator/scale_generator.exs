@@ -13,7 +13,8 @@ defmodule ScaleGenerator do
   "M": E
   "A": F
   """
-  @spec step(scale :: list(String.t()), tonic :: String.t(), step :: String.t()) :: list(String.t())
+  @spec step(scale :: list(String.t()), tonic :: String.t(), step :: String.t()) ::
+          list(String.t())
   def step(scale, tonic, step) do
     tonic_index = scale |> Enum.find_index(&(&1 == String.capitalize(tonic)))
     step_count = steps() |> Map.get(step)
@@ -39,16 +40,18 @@ defmodule ScaleGenerator do
   """
   @spec chromatic_scale(tonic :: String.t()) :: list(String.t())
   def chromatic_scale(tonic \\ "C") do
-    capitalized_tonic = tonic |> String.capitalize
+    capitalized_tonic = tonic |> String.capitalize()
     do_chromatic_scale(capitalized_tonic, 1) ++ [capitalized_tonic]
   end
 
   defp do_chromatic_scale(_, 13), do: []
+
   defp do_chromatic_scale(tonic, count) do
-    next_tonic = case !Enum.member?(no_sharps(), tonic) && !String.contains?(tonic, "#") do
-                   true -> "#{tonic}#"
-                   false -> tonic |> String.replace("#", "") |> increment_tonic
-                 end
+    next_tonic =
+      case !Enum.member?(no_sharps(), tonic) && !String.contains?(tonic, "#") do
+        true -> "#{tonic}#"
+        false -> tonic |> String.replace("#", "") |> increment_tonic
+      end
 
     [tonic | do_chromatic_scale(next_tonic, count + 1)]
   end
@@ -56,15 +59,17 @@ defmodule ScaleGenerator do
   defp no_sharps, do: ~w(B E)
 
   defp increment_tonic(tonic) do
-    incremented_tonic = tonic
-    |> String.to_charlist
-    |> hd
-    |> Kernel.+(1)
+    incremented_tonic =
+      tonic
+      |> String.to_charlist()
+      |> hd
+      |> Kernel.+(1)
 
-    next_tonic = case incremented_tonic do
-                   72 -> 65
-                   _ -> incremented_tonic
-                 end
+    next_tonic =
+      case incremented_tonic do
+        72 -> 65
+        _ -> incremented_tonic
+      end
 
     [next_tonic] |> to_string
   end
@@ -83,18 +88,22 @@ defmodule ScaleGenerator do
   """
   @spec flat_chromatic_scale(tonic :: String.t()) :: list(String.t())
   def flat_chromatic_scale(tonic \\ "C") do
-    capitalized_tonic = tonic |> String.capitalize
+    capitalized_tonic = tonic |> String.capitalize()
     do_flat_chromatic_scale(capitalized_tonic, 1) ++ [capitalized_tonic]
   end
 
   defp do_flat_chromatic_scale(_, 13), do: []
+
   defp do_flat_chromatic_scale(tonic, count) do
-    next_tonic = case String.contains?(tonic, "b") do
-                   true ->
-                     <<note, _>> = tonic
-                     [note] |> to_string
-                   false -> increment_tonic(tonic) |> append_flat
-                 end
+    next_tonic =
+      case String.contains?(tonic, "b") do
+        true ->
+          <<note, _>> = tonic
+          [note] |> to_string
+
+        false ->
+          increment_tonic(tonic) |> append_flat
+      end
 
     [tonic | do_flat_chromatic_scale(next_tonic, count + 1)]
   end
@@ -141,7 +150,7 @@ defmodule ScaleGenerator do
   """
   @spec scale(tonic :: String.t(), pattern :: String.t()) :: list(String.t())
   def scale(tonic, pattern) do
-    capitalized_tonic = tonic |> String.capitalize
+    capitalized_tonic = tonic |> String.capitalize()
 
     tonic
     |> find_chromatic_scale
@@ -150,9 +159,9 @@ defmodule ScaleGenerator do
   end
 
   defp do_generate(_, _, []), do: []
+
   defp do_generate(scale, tonic, [head | tail]) do
     next_tonic = step(scale, tonic, head)
     [String.capitalize(tonic) | do_generate(scale, next_tonic, tail)]
   end
 end
-

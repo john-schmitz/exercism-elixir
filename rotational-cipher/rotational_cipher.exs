@@ -12,8 +12,8 @@ defmodule RotationalCipher do
 
   def rotate(text, shift) do
     text
-    |> String.to_charlist
-    |> pmap(&(transform(&1, shift)))
+    |> String.to_charlist()
+    |> pmap(&transform(&1, shift))
     |> to_string
   end
 
@@ -33,13 +33,15 @@ defmodule RotationalCipher do
 
   defp pmap(list, fun) do
     me = self()
+
     list
-    |> Enum.map(fn(i) ->
-      spawn_link fn -> (send me, { self(), fun.(i) }) end
+    |> Enum.map(fn i ->
+      spawn_link(fn -> send(me, {self(), fun.(i)}) end)
     end)
-    |> Enum.map(fn (pid) ->
-      receive do { ^pid, result } -> result end
+    |> Enum.map(fn pid ->
+      receive do
+        {^pid, result} -> result
+      end
     end)
   end
 end
-

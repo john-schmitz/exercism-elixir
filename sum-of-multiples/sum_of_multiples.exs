@@ -4,8 +4,13 @@ defmodule SumOfMultiples do
   """
   @spec to(non_neg_integer, [non_neg_integer]) :: non_neg_integer
   def to(limit, factors) do
-    (for x <- 1..(limit-1), y <- factors, rem(x, y) == 0, do: x)
-    |> Enum.uniq
-    |> Enum.sum
+    for(
+      x <- 1..(limit - 1),
+      y <- factors,
+      rem(x, y) == 0,
+      do: x
+    )
+    |> Enum.uniq()
+    |> Enum.sum()
   end
 end

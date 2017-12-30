@@ -12,9 +12,8 @@ defmodule StringSeries do
 
   def do_slices(string, index, size) do
     cond do
-      (index + size) > String.length(string) -> []
+      index + size > String.length(string) -> []
       true -> [String.slice(string, index, size) | do_slices(string, index + 1, size)]
     end
   end
 end
-

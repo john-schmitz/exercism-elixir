@@ -9,18 +9,17 @@ defmodule AllYourBase do
 
   def convert(digits, base_a, 10) do
     with {:ok} <- check_positivity(digits),
-         {:ok} <- check_validity(digits, base_a)
-      do
+         {:ok} <- check_validity(digits, base_a) do
       do_convert(digits, base_a, 10)
-      else
-        {:error, _} -> nil
+    else
+      {:error, _} -> nil
     end
   end
 
   def convert(digits, 10, base_b) do
     digits
-    |> Enum.join
-    |> String.to_integer
+    |> Enum.join()
+    |> String.to_integer()
     |> convert_from_base_10(base_b)
     |> clean_leading_zero
   end
@@ -31,20 +30,22 @@ defmodule AllYourBase do
 
   defp do_convert(digits, base_a, 10) do
     index_length = Enum.count(digits) - 1
+
     digits
-    |> Enum.reduce({index_length, 0}, fn(x, {current_index, result}) ->
-      calculated_num = base_a
-      |> :math.pow(current_index)
-      |> Kernel.*(x)
-      |> Kernel.+(result)
+    |> Enum.reduce({index_length, 0}, fn x, {current_index, result} ->
+      calculated_num =
+        base_a
+        |> :math.pow(current_index)
+        |> Kernel.*(x)
+        |> Kernel.+(result)
 
       {current_index - 1, calculated_num}
     end)
     |> Kernel.elem(1)
     |> round
-    |> Integer.to_string
+    |> Integer.to_string()
     |> String.split("", trim: true)
-    |> Enum.map(&(String.to_integer(&1)))
+    |> Enum.map(&String.to_integer(&1))
   end
 
   def check_positivity(digits) do
@@ -63,15 +64,18 @@ defmodule AllYourBase do
 
   defp clean_leading_zero(digits) do
     cond do
-      hd(digits) == 0 and Enum.count(digits) > 1
-      -> List.delete_at(digits, 0)
-      true -> digits
+      hd(digits) == 0 and Enum.count(digits) > 1 ->
+        List.delete_at(digits, 0)
+
+      true ->
+        digits
     end
   end
 
   defp convert_from_base_10(0, _base), do: [0]
+
   defp convert_from_base_10(num, base) do
-    rest = num |> Kernel./(base) |> Float.floor |> round
+    rest = num |> Kernel./(base) |> Float.floor() |> round
     remainder = num |> rem(base)
     convert_from_base_10(rest, base) ++ [remainder]
   end

@@ -5,8 +5,11 @@ defmodule TwelveDays do
   """
   @spec verse(number :: integer) :: String.t()
   def verse(1), do: starting_text("first") <> present_by_number(1) <> "."
+
   def verse(number) do
-    presents_until_2 = Enum.reduce(number..2, "", fn(x, acc) -> acc <> present_by_number(x) <> ", " end)
+    presents_until_2 =
+      Enum.reduce(number..2, "", fn x, acc -> acc <> present_by_number(x) <> ", " end)
+
     {ordinal, _} = Map.get(presents(), number)
     "#{starting_text(ordinal)}#{presents_until_2}and #{present_by_number(1)}."
   end
@@ -17,13 +20,13 @@ defmodule TwelveDays do
   """
   @spec verses(starting_verse :: integer, ending_verse :: integer) :: String.t()
   def verses(starting_verse, ending_verse) do
-    Enum.map(starting_verse..ending_verse, fn(x) -> verse(x) end) |> Enum.join("\n")
+    Enum.map(starting_verse..ending_verse, fn x -> verse(x) end) |> Enum.join("\n")
   end
 
   @doc """
   Sing all 12 verses, in order, one verse per line.
   """
-  @spec sing():: String.t()
+  @spec sing() :: String.t()
   def sing do
     verses(1, 12)
   end
@@ -54,4 +57,3 @@ defmodule TwelveDays do
     }
   end
 end
-

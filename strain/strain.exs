@@ -1,5 +1,6 @@
 defmodule Strain do
   def filter([], _), do: []
+
   def filter([head | tail], fun) do
     if fun.(head) do
       [head | filter(tail, fun)]
@@ -14,7 +15,7 @@ defmodule Strain do
 
   Do not use `Enum.filter`.
   """
-  @spec keep(list :: list(any), fun :: ((any) -> boolean)) :: list(any)
+  @spec keep(list :: list(any), fun :: (any -> boolean)) :: list(any)
   def keep(list, fun) do
     filter(list, fun)
   end
@@ -25,7 +26,7 @@ defmodule Strain do
 
   Do not use `Enum.reject`.
   """
-  @spec discard(list :: list(any), fun :: ((any) -> boolean)) :: list(any)
+  @spec discard(list :: list(any), fun :: (any -> boolean)) :: list(any)
   def discard(list, fun) do
     list -- keep(list, fun)
   end

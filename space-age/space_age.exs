@@ -10,8 +10,15 @@ defmodule SpaceAge do
     neptune: 164.79132
   }
 
-  @type planet :: :mercury | :venus | :earth | :mars | :jupiter
-                | :saturn | :uranus | :neptune
+  @type planet ::
+          :mercury
+          | :venus
+          | :earth
+          | :mars
+          | :jupiter
+          | :saturn
+          | :uranus
+          | :neptune
 
   @doc """
   Return the number of years a person that has lived for 'seconds' seconds is
@@ -19,7 +26,7 @@ defmodule SpaceAge do
   """
   @spec age_on(planet, pos_integer) :: float
   def age_on(planet, seconds) do
-    (seconds / earth_seconds_per_year) / @orbital_difference[planet]
+    seconds / earth_seconds_per_year / @orbital_difference[planet]
   end
 
   defp earth_seconds_per_year, do: 3600 * 24 * 365.25

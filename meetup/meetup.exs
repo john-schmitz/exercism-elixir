@@ -4,8 +4,13 @@ defmodule Meetup do
   """
 
   @type weekday ::
-      :monday | :tuesday | :wednesday
-    | :thursday | :friday | :saturday | :sunday
+          :monday
+          | :tuesday
+          | :wednesday
+          | :thursday
+          | :friday
+          | :saturday
+          | :sunday
 
   @type schedule :: :first | :second | :third | :fourth | :last | :teenth
 
@@ -15,15 +20,16 @@ defmodule Meetup do
   The schedule is in which week (1..4, last or "teenth") the meetup date should
   fall.
   """
-  @spec meetup(pos_integer, pos_integer, weekday, schedule) :: :calendar.date
+  @spec meetup(pos_integer, pos_integer, weekday, schedule) :: :calendar.date()
   def meetup(year, month, weekday, schedule) do
     # Try to find out, what wday(1 to 7 related to monday to sunday)
     # is the very first wday of the valid date range.
     # :teenth starts with 13.
-    starter_day = case schedule do
-                    :teenth -> 13
-                    _ -> 1
-                  end
+    starter_day =
+      case schedule do
+        :teenth -> 13
+        _ -> 1
+      end
 
     {:ok, first_date} = Date.new(year, month, starter_day)
     starter_wday = Date.day_of_week(first_date)
@@ -37,21 +43,26 @@ defmodule Meetup do
     # Let 8 be subtracted by that number, if the result is more than 7, we
     # rotate it by subtracting it by 7.
     diff = 8 - (starter_wday - scheduled_wday)
-    scheduled_wday = case diff > 7 do
-                      true -> diff - 7
-                      false -> diff
-                    end
+
+    scheduled_wday =
+      case diff > 7 do
+        true -> diff - 7
+        false -> diff
+      end
 
     # Second, third, fourth weeks just add the number by
     # multiplication of 7. Teenth starts with 12. Last naively starts with 21.
     day = scheduled_wday + Map.get(days_adder(), schedule)
 
     # Just in case the day is not the last wday of the month, just add it by 7.
-    calculated_day = cond do
-      schedule == :last && Date.days_in_month(first_date) >= day + 7
-        -> day + 7
-      true -> day
-    end
+    calculated_day =
+      cond do
+        schedule == :last && Date.days_in_month(first_date) >= day + 7 ->
+          day + 7
+
+        true ->
+          day
+      end
 
     {year, month, calculated_day}
   end

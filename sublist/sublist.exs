@@ -14,11 +14,17 @@ defmodule Sublist do
 
   def equal?(a, b), do: a === b
   def superlist?(a, b), do: sublist?(b, a)
+
   def sublist?(a, b) do
     a_count = Enum.count(a)
+
     cond do
-      a_count > Enum.count(b) -> false
-      Enum.take(b, a_count) === a -> true
+      a_count > Enum.count(b) ->
+        false
+
+      Enum.take(b, a_count) === a ->
+        true
+
       true ->
         [_ | tail] = b
         sublist?(a, tail)

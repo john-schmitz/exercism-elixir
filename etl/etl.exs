@@ -9,6 +9,9 @@ defmodule ETL do
   """
   @spec transform(map) :: map
   def transform(input) do
-    for {k, vs} <- input, v <- vs, into: %{}, do: { String.downcase(v), k }
+    for {k, vs} <- input,
+        v <- vs,
+        into: %{},
+        do: {String.downcase(v), k}
   end
 end

@@ -12,13 +12,13 @@ defmodule Pangram do
 
   """
 
-  @spec pangram?(String.t) :: boolean
+  @spec pangram?(String.t()) :: boolean
   def pangram?(sentence) do
     sentence
-    |> String.downcase
+    |> String.downcase()
     |> String.replace(~r<[^a-z]>, "")
-    |> String.codepoints
-    |> Enum.uniq
+    |> String.codepoints()
+    |> Enum.uniq()
     |> length
     |> Kernel.==(26)
   end

@@ -6,31 +6,34 @@ defmodule RunLengthEncoder do
   It should also be able to reconstruct the data into its original form.
   "2A3B4C" => "AABBBCCCC"
   """
-  @spec encode(String.t) :: String.t
+  @spec encode(String.t()) :: String.t()
   def encode(string) do
     string
-    |> String.codepoints
-    |> Enum.chunk_by(&(&1))
-    |> Enum.reduce("", fn(x, acc) ->
+    |> String.codepoints()
+    |> Enum.chunk_by(& &1)
+    |> Enum.reduce("", fn x, acc ->
       char_amount = Enum.count(x)
-      compressed_string = case char_amount do
-                            1 -> hd(x)
-                            _ -> (char_amount |> Integer.to_string) <> hd(x)
-                          end
+
+      compressed_string =
+        case char_amount do
+          1 -> hd(x)
+          _ -> (char_amount |> Integer.to_string()) <> hd(x)
+        end
 
       acc <> compressed_string
     end)
   end
 
-  @spec decode(String.t) :: String.t
+  @spec decode(String.t()) :: String.t()
   def decode(string) do
     Regex.scan(~r<\d+\w|\w | |\w>, string)
-    |> List.flatten
-    |> Enum.reduce("", fn(x, acc) ->
-      decoded_char = case Regex.split(~r<\d+>, x, include_captures: true, trim: true) do
-                       [char] -> char
-                       [number, char] -> String.duplicate(char, String.to_integer(number))
-                     end
+    |> List.flatten()
+    |> Enum.reduce("", fn x, acc ->
+      decoded_char =
+        case Regex.split(~r<\d+>, x, include_captures: true, trim: true) do
+          [char] -> char
+          [number, char] -> String.duplicate(char, String.to_integer(number))
+        end
 
       acc <> decoded_char
     end)
