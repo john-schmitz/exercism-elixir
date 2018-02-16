@@ -13,27 +13,27 @@ defmodule PascalsTriangleTest do
     assert PascalsTriangle.rows(1) == [[1]]
   end
 
-  @tag :pending
+  # @tag :pending
   test "two rows" do
     assert PascalsTriangle.rows(2) == [[1], [1, 1]]
   end
 
-  @tag :pending
+  # @tag :pending
   test "three rows" do
     assert PascalsTriangle.rows(3) == [[1], [1, 1], [1, 2, 1]]
   end
 
-  @tag :pending
+  # @tag :pending
   test "fourth row" do
     assert List.last(PascalsTriangle.rows(4)) == [1, 3, 3, 1]
   end
 
-  @tag :pending
+  # @tag :pending
   test "fifth row" do
     assert List.last(PascalsTriangle.rows(5)) == [1, 4, 6, 4, 1]
   end
 
-  @tag :pending
+  # @tag :pending
   test "twentieth row" do
     expected = [
       1,
